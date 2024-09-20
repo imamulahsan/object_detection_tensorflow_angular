@@ -1,74 +1,120 @@
+/* Main container for object detection */
 .object-detection-container {
-    display: flex;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+/* Flex container for row layout */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+/* Columns with flexible width */
+.column {
+  flex: 1;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.left {
+  max-width: 60%; /* Ensure the left column takes up 60% of the container */
+}
+
+.right {
+  max-width: 40%; /* Ensure the right column takes up 40% of the container */
+}
+
+/* Ensure the video and canvas are properly aligned */
+.video-container {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+/* Set both video and canvas to be block elements with no overlap */
+.video-container video {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 640px;
+  max-height: 480px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+/* Ensure the canvas overlays the video */
+.video-container canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* Prevent the canvas from interfering with user interaction */
+  z-index: 1;
+}
+
+/* Detected object text styling */
+.detected-object {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #00FF00;
+  color: white;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* Detected objects list styling */
+.object-list {
+  margin-top: 20px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.object-list ul {
+  list-style: none;
+  padding: 0;
+}
+
+.object-list li {
+  padding: 8px;
+  margin-bottom: 5px;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+}
+
+/* Chart container styling */
+.right canvas {
+  width: 100% !important;  /* Ensure the chart canvas takes full width */
+  height: auto !important;
+}
+
+/* Ensure right column stays aligned properly with the left */
+.right {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  /* Make the layout stack vertically on smaller screens */
+  .row {
     flex-direction: column;
-    align-items: center;
-    padding: 20px;
   }
-  
-  h2 {
-    font-size: 24px;
-    margin-bottom: 10px;
+
+  .left, .right {
+    max-width: 100%;
   }
-  
-  p {
-    font-size: 16px;
-    color: #555;
+
+  .video-container video, .video-container canvas {
+    max-width: 100%;
   }
-  
-  .video-container {
-    position: relative;
-  }
-  
-  canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
-  }
-  
-  .detected-object {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: #00FF00;
-    color: white;
-    border-radius: 8px;
-    font-size: 18px;
-    font-weight: bold;
-    animation: fadeIn 1s;
-  }
-  
-  .object-list {
-    margin-top: 20px;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    width: 300px;
-    text-align: left;
-  }
-  
-  .object-list ul {
-    list-style: none;
-    padding: 0;
-  }
-  
-  .object-list li {
-    padding: 5px;
-    background-color: #f0f0f0;
-    margin-bottom: 5px;
-    border-radius: 4px;
-  }
-  
-  .instructions {
-    margin-top: 20px;
-    font-size: 16px;
-    color: #888;
-  }
-  
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-  
+}

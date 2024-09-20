@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import * as cocoSsd from '@tensorflow-models/coco-ssd';
 import * as tf from '@tensorflow/tfjs';
+import { Chart } from 'chart.js';  // Import Chart.js
 
 @Component({
   selector: 'app-object-detector',
@@ -9,14 +10,16 @@ import * as tf from '@tensorflow/tfjs';
 })
 export class ObjectDetectorComponent implements OnInit {
 
-  @ViewChild('videoElement') videoElement!: ElementRef;
+  @ViewChild('videoElement') videoElement!: ElementRef<HTMLVideoElement>;
+  @ViewChild('canvas') canvasElement!: ElementRef<HTMLCanvasElement>;  // Reference to the canvas element
+  @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;  // Reference to Chart.js canvas
   detectedObject: string = '';
   model!: cocoSsd.ObjectDetection;
   detectedObjects: string[] = []; // List of all detected objects
-  lastSpokenObject: string = ''; // To track the last spoken object to avoid repetition
+  objectCount: { [key: string]: number } = {}; // Count of each object type
+  totalObjectsDetected: number = 0; // Total number of objects detected
+  chart: any;  // To hold the Chart.js instance
   isSpeaking = false; // To track if the system is currently speaking
-
-  constructor() { }
 
   async ngOnInit() {
     await tf.setBackend('webgl');
@@ -25,6 +28,7 @@ export class ObjectDetectorComponent implements OnInit {
     this.model = await cocoSsd.load();
     console.log('COCO SSD Model loaded.');
     this.startWebcam();
+    this.createChart();  // Create the chart on initialization
   }
 
   startWebcam() {
@@ -43,21 +47,28 @@ export class ObjectDetectorComponent implements OnInit {
 
   async detectFrame() {
     const video = this.videoElement.nativeElement;
+    const canvas = this.canvasElement.nativeElement;
+    const ctx = canvas.getContext('2d');
+
+    // Set canvas dimensions to match the displayed size of the video element
+    canvas.width = video.clientWidth;
+    canvas.height = video.clientHeight;
 
     this.model.detect(video).then((predictions: cocoSsd.DetectedObject[]) => {
-      this.renderPredictions(predictions);
+      this.renderPredictions(predictions, ctx, video);
 
       // Loop over the predictions to handle new detections
       predictions.forEach(prediction => {
         const detectedClass = prediction.class;
 
-        // Check if the object is already detected and stored in the list
+        // Update object count and statistics
+        this.updateObjectStats(detectedClass);
+
+        // Set the detected object text and speak the object
         if (!this.detectedObjects.includes(detectedClass)) {
-          // Add the new object to the list
           this.detectedObjects.push(detectedClass);
-          // Set the detected object text
           this.detectedObject = `This is a ${detectedClass}`;
-          
+
           // Speak the detected object only if not currently speaking
           if (!this.isSpeaking) {
             this.speakDetectedObject(detectedClass);
@@ -72,34 +83,111 @@ export class ObjectDetectorComponent implements OnInit {
   }
 
   // Render predictions and bounding boxes on the canvas
-  renderPredictions(predictions: cocoSsd.DetectedObject[]) {
-    const canvas = document.getElementById('canvas') as HTMLCanvasElement;
-    const ctx = canvas.getContext('2d');
-
-    if (ctx) {
-      canvas.width = this.videoElement.nativeElement.width;
-      canvas.height = this.videoElement.nativeElement.height;
-
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      predictions.forEach(prediction => {
-        const [x, y, width, height] = prediction.bbox;
-
-        // Draw the bounding box
-        ctx.strokeStyle = '#00FF00';
-        ctx.lineWidth = 4;
-        ctx.strokeRect(x, y, width, height);
-
-        // Draw the label and confidence score
-        ctx.fillStyle = '#00FF00';
-        ctx.font = '18px Arial';
-        ctx.fillText(
-          `${prediction.class} (${Math.round(prediction.score * 100)}%)`,
-          x,
-          y > 10 ? y - 5 : 10
-        );
-      });
+  renderPredictions(predictions: cocoSsd.DetectedObject[], ctx: CanvasRenderingContext2D | null, video: HTMLVideoElement) {
+    if (!ctx) {
+      console.error('Unable to get canvas context');
+      return;
     }
+
+    // Clear previous drawings
+    ctx.clearRect(0, 0, this.canvasElement.nativeElement.width, this.canvasElement.nativeElement.height);
+
+    const videoWidth = video.videoWidth;
+    const videoHeight = video.videoHeight;
+    const displayedWidth = video.clientWidth;
+    const displayedHeight = video.clientHeight;
+
+    // Calculate scale factors for drawing on the resized canvas
+    const xScale = displayedWidth / videoWidth;
+    const yScale = displayedHeight / videoHeight;
+
+    predictions.forEach(prediction => {
+      const [x, y, width, height] = prediction.bbox;
+
+      // Scale the bounding box coordinates
+      const scaledX = x * xScale;
+      const scaledY = y * yScale;
+      const scaledWidth = width * xScale;
+      const scaledHeight = height * yScale;
+
+      // Draw the bounding box
+      ctx.strokeStyle = '#00FF00';
+      ctx.lineWidth = 4;
+      ctx.strokeRect(scaledX, scaledY, scaledWidth, scaledHeight);
+
+      // Draw the label and confidence score
+      ctx.fillStyle = '#00FF00';
+      ctx.font = '18px Arial';
+      ctx.fillText(
+        `${prediction.class} (${Math.round(prediction.score * 100)}%)`,
+        scaledX,
+        scaledY > 10 ? scaledY - 5 : 10
+      );
+    });
+  }
+
+  // Update object statistics (count and graph data)
+  updateObjectStats(objectClass: string) {
+    // Update the total object count
+    this.totalObjectsDetected++;
+
+    // Update the count for the specific object type
+    if (this.objectCount[objectClass]) {
+      this.objectCount[objectClass]++;
+    } else {
+      this.objectCount[objectClass] = 1;
+    }
+
+    // Update the chart
+    this.updateChart(objectClass);
+  }
+
+  // Create the Chart.js graph
+  createChart() {
+    const ctx = this.chartCanvas.nativeElement.getContext('2d');
+    
+    if (!ctx) {
+      console.error('Unable to get 2D context for chart');
+      return;  // Stop if we can't get the 2D context
+    }
+
+    this.chart = new Chart(ctx, {
+      type: 'bar',  // Chart type
+      data: {
+        labels: [],  // Empty at first, will be updated dynamically
+        datasets: [{
+          label: 'Object Counts',
+          data: [],  // Empty at first
+          backgroundColor: 'rgba(54, 162, 235, 0.2)',
+          borderColor: 'rgba(54, 162, 235, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+  }
+
+  // Update the Chart.js graph
+  updateChart(objectClass: string) {
+    const chartIndex = this.chart.data.labels.indexOf(objectClass);
+
+    if (chartIndex === -1) {
+      // New object class, add to chart
+      this.chart.data.labels.push(objectClass);
+      this.chart.data.datasets[0].data.push(1);
+    } else {
+      // Existing object class, update count
+      this.chart.data.datasets[0].data[chartIndex]++;
+    }
+
+    this.chart.update();  // Update the chart to reflect changes
   }
 
   // Text-to-Speech function to speak the detected object
