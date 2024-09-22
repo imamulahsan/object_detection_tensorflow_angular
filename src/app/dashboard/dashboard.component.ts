@@ -14,4 +14,13 @@ export class DashboardComponent {
     this.router.navigate(['/object-detection']); // Navigate to object detection page
   }
 
+  openImageClassification() {
+    this.router.navigate(['/image-classification']); // Navigate to object detection page
+  }
+
+  openHandGesture() {
+    this.router.navigate(['/hand-gesture']); // Navigate to object detection page
+  }
+
+
 }

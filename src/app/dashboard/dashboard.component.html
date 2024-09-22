@@ -1,5 +1,33 @@
 <div class="dashboard">
-    <h1>Welcome to the Object Detection App</h1>
-    <p>This app detects objects in real-time using your camera.</p>
-    <button (click)="openObjectDetection()">Open Camera</button>
+  <h1>Vision X</h1>
+  
+  <!-- Cool description of the app -->
+  <p>
+    Hi! Trying out some cool features of Web Development and Computer Vision
+  </p>
+
+  <!-- Card layout -->
+  <div class="card-container">
+    
+    <!-- Card for Object Detection -->
+    <div class="card" (click)="openObjectDetection()">
+      <img src="assets/images/camera-icon.png" alt="Object Detection" />
+      <h2>Object Detection</h2>
+      <p>Detect objects in real-time using your device's camera.</p>
+    </div>
+
+    <!-- Future Card 1: Image Classification -->
+    <div class="card" (click)="openImageClassification()">
+      <img src="assets/images/classification-icon.png" alt="Image Classification" />
+      <h2>Image Classification</h2>
+      <p>Classify images from uploaded photos. Coming soon!</p>
+    </div>
+
+    <!-- Future Card 2: Hand Gesture Detection -->
+    <div class="card" (click)="openHandGesture()">
+      <img src="assets/images/face-detection-icon.png" alt="Hand Gesture Detection" />
+      <h2>Hand Gesture Detection</h2>
+      <p>Detect hand gestures in real-time using your camera. Coming soon!</p>
+    </div>
   </div>
+</div>

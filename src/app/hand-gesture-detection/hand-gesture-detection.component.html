@@ -1,0 +1,11 @@
+<div class="hand-gesture-detection-container">
+    <h1>Real-time Hand Gesture Detection</h1>
+    
+    <div class="video-container">
+      <video #videoElement width="640" height="480" autoplay></video>
+      <canvas #canvas></canvas> <!-- Overlay canvas for drawing keypoints -->
+    </div>
+  
+    <p *ngIf="!isModelLoaded">Loading hand gesture detection model, please wait...</p>
+  </div>
+  

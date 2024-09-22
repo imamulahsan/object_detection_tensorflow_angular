@@ -1,0 +1,106 @@
+/* Dark background */
+body {
+  background: radial-gradient(circle, #0e0e0e, #1a1a1a); /* Blackish background with a radial gradient */
+  font-family: 'Roboto', sans-serif;
+  color: #00ffcc; /* Glowing radium text color */
+}
+
+/* Dashboard container styling */
+.dashboard {
+  text-align: center;
+  padding: 40px;
+}
+
+/* App title */
+.dashboard h1 {
+  font-size: 3em;
+  color: #00ffcc; /* Neon glow for title */
+  margin-bottom: 30px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 0 0 15px rgba(0, 255, 204, 0.7); /* Glowing effect */
+}
+
+/* App description */
+.dashboard p {
+  font-size: 1.3em;
+  color: #b0b0b0; /* Slightly dimmed grey for description */
+  margin-bottom: 50px;
+  line-height: 1.5;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  text-shadow: 0 0 10px rgba(0, 255, 204, 0.4); /* Soft glow for description */
+}
+
+/* Card container for the dashboard */
+.card-container {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 20px; /* Space between cards */
+}
+
+/* Styling each card */
+.card {
+  background-color: #1a1a1a; /* Darker card background */
+  border-radius: 10px;
+  box-shadow: 0 6px 12px rgba(0, 255, 204, 0.1); /* Softer shadow with teal glow */
+  width: 300px;
+  padding: 30px;
+  text-align: center;
+  transition: transform 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+  margin: 20px;
+  border: 1px solid #00ffcc; /* Glowing border */
+}
+
+/* Card icon styling */
+.card img {
+  width: 100px;
+  height: 100px;
+  margin-bottom: 20px;
+  filter: drop-shadow(0 0 5px #00ffcc); /* Glow effect on images */
+}
+
+/* Card heading */
+.card h2 {
+  font-size: 1.8em;
+  color: #00ffcc; /* Neon glow for card titles */
+  margin-bottom: 15px;
+  font-weight: bold;
+  text-shadow: 0 0 10px rgba(0, 255, 204, 0.7); /* Glowing text */
+}
+
+/* Card description */
+.card p {
+  color: #a3a3a3; /* Soft grey for descriptions */
+  font-size: 1em;
+  text-shadow: 0 0 5px rgba(0, 255, 204, 0.4); /* Subtle glow */
+}
+
+/* Hover effect on cards */
+.card:hover {
+  transform: translateY(-10px); /* Hover lift */
+  box-shadow: 0 12px 24px rgba(0, 255, 204, 0.4); /* Stronger shadow with teal glow */
+}
+
+/* Future feature cards styling */
+.future-feature {
+  opacity: 0.6;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .card-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .card {
+    width: 90%;
+    margin-bottom: 20px;
+  }
+}

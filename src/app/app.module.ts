@@ -6,12 +6,16 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { ObjectDetectorComponent } from './object-detector/object-detector.component';
+import { ImageClassificationComponent } from './image-classification/image-classification.component';
+import { HandGestureDetectionComponent } from './hand-gesture-detection/hand-gesture-detection.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     DashboardComponent,
-    ObjectDetectorComponent
+    ObjectDetectorComponent,
+    ImageClassificationComponent,
+    HandGestureDetectionComponent
   ],
   imports: [
     BrowserModule,

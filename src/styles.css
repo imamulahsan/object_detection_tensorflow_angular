@@ -1,1 +1,9 @@
-/* You can add global styles to this file, and also import other style files */
+/* Global background style for the app */
+body, html {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background: radial-gradient(circle, #0e0e0e, #1a1a1a); /* Blackish gradient background */
+    font-family: 'Roboto', sans-serif;
+    color: #00ffcc; /* Radium glowing text color */
+}
