@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import * as mobilenet from '@tensorflow-models/mobilenet';
 import * as tf from '@tensorflow/tfjs';
+import { Router } from '@angular/router';  // Import the Router for navigation
 
 @Component({
   selector: 'app-image-classification',
@@ -12,7 +13,7 @@ export class ImageClassificationComponent {
   imageSrc: string | ArrayBuffer | null = null;
   prediction: { className: string; probability: number } | null = null;
 
-  constructor() {
+  constructor(private router: Router) {
     // Load the MobileNet model
     mobilenet.load().then(loadedModel => {
       this.model = loadedModel;
@@ -43,5 +44,10 @@ export class ImageClassificationComponent {
       this.prediction = predictions[0];  // Get the top prediction
       console.log('Prediction:', this.prediction);
     };
+  }
+
+  // Method to navigate back to the dashboard
+  goBack() {
+    this.router.navigate(['/dashboard']);  // Navigate back to the dashboard route
   }
 }

@@ -1,96 +1,141 @@
+/* Container styling */
 .image-classification {
-    text-align: center;
-    padding: 20px;
-    background-color: #f9f9f9;
-    max-width: 600px;
-    margin: 0 auto;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    font-family: 'Arial', sans-serif;
+  text-align: center;
+  padding: 40px;
+  background-color: #1a1a1a; /* Darker background to match the global theme */
+  max-width: 600px;
+  margin: 0 auto;
+  border-radius: 10px;
+  box-shadow: 0 6px 12px rgba(0, 255, 204, 0.2); /* Soft teal glow */
+  font-family: 'Roboto', sans-serif;
+  color: #00ffcc; /* Neon glow for text */
+}
+
+/* Title styling */
+.image-classification h1 {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  color: #00ffcc; /* Neon title */
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 0 0 15px rgba(0, 255, 204, 0.7); /* Glowing effect */
+}
+
+/* Paragraph and description styling */
+.image-classification p {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  color: #b0b0b0; /* Slightly dimmed grey for description */
+  text-shadow: 0 0 10px rgba(0, 255, 204, 0.4); /* Soft glow */
+}
+
+/* Custom file upload button */
+.custom-file-upload {
+  display: inline-block;
+  padding: 10px 20px;
+  cursor: pointer;
+  background-color: #00ffcc; /* Neon background for button */
+  color: #1a1a1a; /* Dark text for contrast */
+  border-radius: 5px;
+  font-size: 1.2rem;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  text-shadow: 0 0 10px rgba(0, 255, 204, 0.7); /* Glowing button text */
+  border: 2px solid #00ffcc; /* Glowing border */
+}
+
+.custom-file-upload input[type="file"] {
+  display: none;
+}
+
+.custom-file-upload:hover {
+  background-color: #00ccaa; /* Slightly darker neon on hover */
+  box-shadow: 0 0 20px rgba(0, 255, 204, 0.7); /* Stronger glow on hover */
+}
+
+.preview img {
+  width: 100%; /* Take up the full width of the container */
+  max-width: 100%; /* Prevent the image from overflowing */
+  height: auto; /* Maintain the aspect ratio of the image */
+  margin: 20px 0;
+  border: 2px solid #00ffcc; /* Glowing border for image preview */
+  border-radius: 10px;
+  box-shadow: 0 6px 12px rgba(0, 255, 204, 0.2); /* Soft glow for the image */
+  filter: drop-shadow(0 0 10px #00ffcc); /* Glow effect */
+}
+
+/* Adjust image container to be responsive */
+.preview {
+  max-width: 400px; /* Limit the preview container width */
+  margin: 0 auto; /* Center the image container */
+}
+
+/* Prediction result styling */
+.prediction {
+  margin-top: 20px;
+  background-color: #262626; /* Darker background to match the app theme */
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 6px 12px rgba(0, 255, 204, 0.2); /* Soft glow for prediction box */
+}
+
+.prediction h2 {
+  font-size: 1.8rem;
+  color: #00ffcc; /* Neon glow for prediction title */
+  text-shadow: 0 0 10px rgba(0, 255, 204, 0.7); /* Glowing text */
+}
+
+.prediction p {
+  font-size: 1.4rem;
+  color: #b0b0b0; /* Dimmed grey for confidence percentage */
+  text-shadow: 0 0 10px rgba(0, 255, 204, 0.4); /* Subtle glow */
+}
+
+/* Back button styling */
+.back-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 1.2rem;
+  color: #00ffcc;
+  background-color: transparent;
+  border: 2px solid #00ffcc;
+  border-radius: 5px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-shadow: 0 0 10px rgba(0, 255, 204, 0.7);
+  transition: background-color 0.3s, box-shadow 0.3s;
+  position: relative;
+  display: inline-block;
+}
+
+.back-button:hover {
+  background-color: #00ffcc;
+  color: #1a1a1a;
+  box-shadow: 0 0 20px rgba(0, 255, 204, 0.7);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .image-classification {
+      padding: 20px;
   }
-  
+
   h1 {
-    font-size: 2.5rem;
-    margin-bottom: 20px;
-    color: #333;
-  }
-  
-  p {
-    font-size: 1.2rem;
-    margin-bottom: 20px;
-    color: #555;
-  }
-  
-  /* Custom file upload button */
-  .custom-file-upload {
-    display: inline-block;
-    padding: 10px 20px;
-    cursor: pointer;
-    background-color: #007bff;
-    color: white;
-    border-radius: 5px;
-    font-size: 1rem;
-    transition: background-color 0.3s ease;
-  }
-  
-  .custom-file-upload input[type="file"] {
-    display: none;
-  }
-  
-  .custom-file-upload:hover {
-    background-color: #0056b3;
-  }
-  
-  /* Image preview styling */
-  .preview img {
-    width: 100%;
-    max-width: 400px;
-    height: auto;
-    margin: 20px 0;
-    border: 2px solid #ddd;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  /* Prediction result styling */
-  .prediction {
-    margin-top: 20px;
-    background-color: #e8f5e9;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 128, 0, 0.2);
-  }
-  
-  .prediction h2 {
-    font-size: 1.8rem;
-    color: #333;
-  }
-  
-  .prediction p {
-    font-size: 1.4rem;
-    color: #555;
-  }
-  
-  /* Responsive Design */
-  @media (max-width: 768px) {
-    .image-classification {
-      padding: 10px;
-    }
-  
-    h1 {
       font-size: 2rem;
-    }
-  
-    p, .custom-file-upload {
-      font-size: 1rem;
-    }
-  
-    .prediction h2 {
-      font-size: 1.5rem;
-    }
-  
-    .prediction p {
-      font-size: 1.2rem;
-    }
   }
-  
+
+  p, .custom-file-upload {
+      font-size: 1rem;
+  }
+
+  .prediction h2 {
+      font-size: 1.5rem;
+  }
+
+  .prediction p {
+      font-size: 1.2rem;
+  }
+  .preview {
+    max-width: 100%; /* Allow the image container to be full width on smaller screens */
+}
+}

@@ -15,5 +15,8 @@
       <h2>Prediction: {{ prediction.className }}</h2>
       <p>Confidence: {{ prediction.probability | percent }}</p>
     </div>
+
+    <!-- Back Button -->
+  <button class="back-button" (click)="goBack()">Back to Dashboard</button>
   </div>
   

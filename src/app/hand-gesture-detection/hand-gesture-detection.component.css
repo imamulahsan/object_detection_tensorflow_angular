@@ -1,31 +1,94 @@
+/* Container styling */
 .hand-gesture-detection-container {
-    text-align: center;
-    padding: 20px;
-  }
-  
-  h1 {
-    font-size: 2.5rem;
-    margin-bottom: 20px;
-  }
-  
+  text-align: center;
+  padding: 40px;
+  color: #00ffcc;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Title styling */
+.hand-gesture-detection-container h1 {
+  font-size: 2.5rem;
+  color: #00ffcc; /* Neon glow */
+  text-transform: uppercase;
+  margin-bottom: 30px;
+  letter-spacing: 2px;
+  text-shadow: 0 0 15px rgba(0, 255, 204, 0.7); /* Glowing effect */
+}
+
+/* Video container styling */
+.video-container {
+  position: relative;
+  border-radius: 10px;
+  box-shadow: 0 6px 12px rgba(0, 255, 204, 0.2);
+  margin-bottom: 20px;
+}
+
+/* Video element styling */
+video {
+  width: 640px;
+  height: 480px;
+  border: 2px solid #00ffcc; /* Glowing border for video */
+  border-radius: 10px;
+  filter: drop-shadow(0 0 10px #00ffcc); /* Glow effect */
+}
+
+/* Canvas overlay styling */
+canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* Loading text styling */
+.hand-gesture-detection-container p {
+  font-size: 1.3rem;
+  color: #b0b0b0; /* Dimmed grey for loading text */
+  text-shadow: 0 0 10px rgba(0, 255, 204, 0.4); /* Soft glow */
+  margin-top: 20px;
+  line-height: 1.5;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.back-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 1.2rem;
+  color: #00ffcc;
+  background-color: transparent;
+  border: 2px solid #00ffcc;
+  border-radius: 5px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-shadow: 0 0 10px rgba(0, 255, 204, 0.7);
+  transition: background-color 0.3s, box-shadow 0.3s;
+  position: relative;
+  display: inline-block;
+}
+
+.back-button:hover {
+  background-color: #00ffcc;
+  color: #1a1a1a;
+  box-shadow: 0 0 20px rgba(0, 255, 204, 0.7);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
   .video-container {
-    position: relative;
-    display: inline-block;
+    width: 90%;
   }
-  
+
   video {
     width: 100%;
     height: auto;
-    border: 2px solid #ddd;
-    border-radius: 10px;
   }
-  
-  canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none; /* Prevent interaction with the canvas */
-  }
-  
+}

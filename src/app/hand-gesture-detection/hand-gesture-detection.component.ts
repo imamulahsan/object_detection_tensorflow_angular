@@ -1,27 +1,33 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import * as handpose from '@tensorflow-models/hand-pose-detection';
 import * as tf from '@tensorflow/tfjs-core';
 import '@tensorflow/tfjs-backend-webgl';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-hand-gesture-detection',
   templateUrl: './hand-gesture-detection.component.html',
   styleUrls: ['./hand-gesture-detection.component.css']
 })
-export class HandGestureDetectionComponent implements OnInit {
+export class HandGestureDetectionComponent implements OnInit, OnDestroy {
 
   @ViewChild('videoElement') videoElement!: ElementRef<HTMLVideoElement>;
   @ViewChild('canvas') canvasElement!: ElementRef<HTMLCanvasElement>;
 
   model: handpose.HandDetector | null = null;
   isModelLoaded: boolean = false;
+  stream: MediaStream | null = null;  // To store the media stream
 
-  constructor() { }
+  constructor(private router: Router) { }
 
   async ngOnInit() {
     // Load the MediaPipe Hands model with the correct runtime
     await this.loadModel();
     this.startVideoStream();
+  }
+
+  ngOnDestroy() {
+    this.stopVideoStream();  // Stop the video stream when the component is destroyed
   }
 
   // Load the MediaPipe Hands model with TensorFlow.js runtime
@@ -36,19 +42,29 @@ export class HandGestureDetectionComponent implements OnInit {
   }
 
   // Start the video stream
-  startVideoStream() {
-    const video = this.videoElement.nativeElement;
+  // Start the video stream
+startVideoStream() {
+  const video = this.videoElement.nativeElement;
 
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
-        video.srcObject = stream;
-        video.play();
-        video.onloadeddata = () => {
-          this.detectHands();
-        };
-      });
-    }
+  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
+      this.stream = stream;  // Store the stream reference
+      video.srcObject = stream;
+      video.play();
+      video.onloadeddata = () => {
+        this.detectHands();
+      };
+    });
   }
+}
+
+stopVideoStream() {
+  if (this.stream) {
+    const tracks = this.stream.getTracks();  // Get all tracks
+    tracks.forEach(track => track.stop());   // Stop each track
+    this.stream = null;  // Clear the stream reference
+  }
+}
 
   // Detect hands and draw keypoints on the canvas
   async detectHands() {
@@ -87,5 +103,11 @@ export class HandGestureDetectionComponent implements OnInit {
       ctx.fillStyle = 'red';
       ctx.fill();
     });
+  }
+
+  // Navigate back to dashboard and stop the video stream
+  goBack() {
+    this.stopVideoStream();  // Stop camera stream
+    this.router.navigate(['/dashboard']);  // Navigate to dashboard
   }
 }

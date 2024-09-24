@@ -8,6 +8,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { ObjectDetectorComponent } from './object-detector/object-detector.component';
 import { ImageClassificationComponent } from './image-classification/image-classification.component';
 import { HandGestureDetectionComponent } from './hand-gesture-detection/hand-gesture-detection.component';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import { HandGestureDetectionComponent } from './hand-gesture-detection/hand-ges
   ],
   imports: [
     BrowserModule,
+    HttpClientModule,
     AppRoutingModule,
     NgChartsModule // Ensure this is in the imports array
   ],
