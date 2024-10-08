@@ -1,72 +1,65 @@
 /* Main container for object detection */
 .object-detection-container {
   padding: 20px;
-  max-width: 1200px;
+  max-width: 800px;
   margin: 0 auto;
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: center;
 }
 
-/* Flex container for row layout */
-.row {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  margin-top: 20px;
+/* Center the title at the top */
+h2 {
+  text-align: center;
+  font-size: 24px; /* Adjust the size as needed */
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #00FF00; /* You can adjust the color to fit your design */
 }
 
-/* Columns with flexible width */
-.column {
-  flex: 1;
+/* Countdown timer styling */
+.countdown-timer {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 36px;
+  font-weight: bold;
+  color: #FF0000;
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.8);
   padding: 20px;
-  box-sizing: border-box;
+  border-radius: 10px;
+  z-index: 9999;
 }
 
-.left {
-  max-width: 60%; /* Ensure the left column takes up 60% of the container */
-}
-
-.right {
-  max-width: 40%; /* Ensure the right column takes up 40% of the container */
-}
-
-/* Ensure the video and canvas are properly aligned */
+/* Video container */
 .video-container {
   position: relative;
   margin-bottom: 20px;
 }
 
-/* Set both video and canvas to be block elements with no overlap */
-.video-container video {
+/* Ensure the video and canvas have the same dimensions and are aligned */
+.video-container video, .video-container canvas {
   display: block;
-  width: 100%;
-  height: auto;
-  max-width: 640px;
-  max-height: 480px;
+  width: 100%; /* This makes the video responsive */
+  height: auto; /* Preserve the aspect ratio */
   border: 1px solid #ddd;
   border-radius: 8px;
 }
 
-/* Ensure the canvas overlays the video */
+/* Ensure the canvas overlays the video perfectly */
 .video-container canvas {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none; /* Prevent the canvas from interfering with user interaction */
-  z-index: 1;
+  pointer-events: none; /* Prevent interaction with the canvas */
+  z-index: 1; /* Ensure canvas appears on top of the video */
 }
 
-/* Detected object text styling */
-.detected-object {
-  margin-top: 20px;
-  padding: 10px;
-  background-color: #00FF00;
-  color: white;
-  border-radius: 8px;
-  font-size: 18px;
-  font-weight: bold;
+/* Hide elements using CSS class */
+.hidden {
+  display: none;
 }
 
 /* Detected objects list styling */
@@ -88,33 +81,7 @@
   margin-bottom: 5px;
   background-color: #f0f0f0;
   border-radius: 4px;
-}
-
-/* Chart container styling */
-.right canvas {
-  width: 100% !important;  /* Ensure the chart canvas takes full width */
-  height: auto !important;
-}
-
-/* Ensure right column stays aligned properly with the left */
-.right {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-}
-
-@media (max-width: 768px) {
-  /* Make the layout stack vertically on smaller screens */
-  .row {
-    flex-direction: column;
-  }
-
-  .left, .right {
-    max-width: 100%;
-  }
-
-  .video-container video, .video-container canvas {
-    max-width: 100%;
-  }
+  font-size: 20px; /* Increased font size for detected objects */
+  font-weight: bold;
+  color: #333; /* Darker text for readability */
 }

@@ -1,25 +1,24 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import * as cocoSsd from '@tensorflow-models/coco-ssd';
 import * as tf from '@tensorflow/tfjs';
-import { Chart } from 'chart.js';  // Import Chart.js
 
 @Component({
   selector: 'app-object-detector',
   templateUrl: './object-detector.component.html',
   styleUrls: ['./object-detector.component.css']
 })
-export class ObjectDetectorComponent implements OnInit {
+export class ObjectDetectorComponent implements OnInit, AfterViewInit {
 
-  @ViewChild('videoElement') videoElement!: ElementRef<HTMLVideoElement>;
-  @ViewChild('canvas') canvasElement!: ElementRef<HTMLCanvasElement>;  // Reference to the canvas element
-  @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;  // Reference to Chart.js canvas
+  @ViewChild('videoElement', { static: false }) videoElement!: ElementRef<HTMLVideoElement>;
+  @ViewChild('canvas', { static: false }) canvasElement!: ElementRef<HTMLCanvasElement>;  // Reference to the canvas element
   detectedObject: string = '';
   model!: cocoSsd.ObjectDetection;
   detectedObjects: string[] = []; // List of all detected objects
-  objectCount: { [key: string]: number } = {}; // Count of each object type
-  totalObjectsDetected: number = 0; // Total number of objects detected
-  chart: any;  // To hold the Chart.js instance
   isSpeaking = false; // To track if the system is currently speaking
+
+  // Timer properties
+  countdown: number = 3;  // Set your desired countdown time (e.g., 3 seconds)
+  isCameraStarted: boolean = false; // Flag to track when the camera feed is active
 
   async ngOnInit() {
     await tf.setBackend('webgl');
@@ -27,8 +26,11 @@ export class ObjectDetectorComponent implements OnInit {
 
     this.model = await cocoSsd.load();
     console.log('COCO SSD Model loaded.');
-    this.startWebcam();
-    this.createChart();  // Create the chart on initialization
+  }
+
+  ngAfterViewInit() {
+    // Now that the view has been initialized, we can safely access the @ViewChild elements
+    this.startCountdown();  // Start the countdown before activating the camera
   }
 
   startWebcam() {
@@ -41,7 +43,11 @@ export class ObjectDetectorComponent implements OnInit {
         video.onloadeddata = () => {
           this.detectFrame();
         };
+      }).catch(err => {
+        console.error('Error accessing webcam: ', err);
       });
+    } else {
+      console.error('getUserMedia not supported in this browser.');
     }
   }
 
@@ -61,9 +67,6 @@ export class ObjectDetectorComponent implements OnInit {
       predictions.forEach(prediction => {
         const detectedClass = prediction.class;
 
-        // Update object count and statistics
-        this.updateObjectStats(detectedClass);
-
         // Set the detected object text and speak the object
         if (!this.detectedObjects.includes(detectedClass)) {
           this.detectedObjects.push(detectedClass);
@@ -82,113 +85,55 @@ export class ObjectDetectorComponent implements OnInit {
     });
   }
 
+  
   // Render predictions and bounding boxes on the canvas
-  renderPredictions(predictions: cocoSsd.DetectedObject[], ctx: CanvasRenderingContext2D | null, video: HTMLVideoElement) {
-    if (!ctx) {
-      console.error('Unable to get canvas context');
-      return;
-    }
-
-    // Clear previous drawings
-    ctx.clearRect(0, 0, this.canvasElement.nativeElement.width, this.canvasElement.nativeElement.height);
-
-    const videoWidth = video.videoWidth;
-    const videoHeight = video.videoHeight;
-    const displayedWidth = video.clientWidth;
-    const displayedHeight = video.clientHeight;
-
-    // Calculate scale factors for drawing on the resized canvas
-    const xScale = displayedWidth / videoWidth;
-    const yScale = displayedHeight / videoHeight;
-
-    predictions.forEach(prediction => {
-      const [x, y, width, height] = prediction.bbox;
-
-      // Scale the bounding box coordinates
-      const scaledX = x * xScale;
-      const scaledY = y * yScale;
-      const scaledWidth = width * xScale;
-      const scaledHeight = height * yScale;
-
-      // Draw the bounding box
-      ctx.strokeStyle = '#00FF00';
-      ctx.lineWidth = 4;
-      ctx.strokeRect(scaledX, scaledY, scaledWidth, scaledHeight);
-
-      // Draw the label and confidence score
-      ctx.fillStyle = '#00FF00';
-      ctx.font = '18px Arial';
-      ctx.fillText(
-        `${prediction.class} (${Math.round(prediction.score * 100)}%)`,
-        scaledX,
-        scaledY > 10 ? scaledY - 5 : 10
-      );
-    });
+renderPredictions(predictions: cocoSsd.DetectedObject[], ctx: CanvasRenderingContext2D | null, video: HTMLVideoElement) {
+  if (!ctx) {
+    console.error('Unable to get canvas context');
+    return;
   }
 
-  // Update object statistics (count and graph data)
-  updateObjectStats(objectClass: string) {
-    // Update the total object count
-    this.totalObjectsDetected++;
+  // Clear the previous drawings
+  ctx.clearRect(0, 0, this.canvasElement.nativeElement.width, this.canvasElement.nativeElement.height);
 
-    // Update the count for the specific object type
-    if (this.objectCount[objectClass]) {
-      this.objectCount[objectClass]++;
-    } else {
-      this.objectCount[objectClass] = 1;
-    }
+  // Get the real video size and canvas size
+  const videoWidth = video.videoWidth;
+  const videoHeight = video.videoHeight;
 
-    // Update the chart
-    this.updateChart(objectClass);
-  }
+  // Set canvas size to match video size
+  this.canvasElement.nativeElement.width = videoWidth;
+  this.canvasElement.nativeElement.height = videoHeight;
 
-  // Create the Chart.js graph
-  createChart() {
-    const ctx = this.chartCanvas.nativeElement.getContext('2d');
-    
-    if (!ctx) {
-      console.error('Unable to get 2D context for chart');
-      return;  // Stop if we can't get the 2D context
-    }
+  // Calculate the ratio between video size and displayed size
+  const xScale = this.canvasElement.nativeElement.width / videoWidth;
+  const yScale = this.canvasElement.nativeElement.height / videoHeight;
 
-    this.chart = new Chart(ctx, {
-      type: 'bar',  // Chart type
-      data: {
-        labels: [],  // Empty at first, will be updated dynamically
-        datasets: [{
-          label: 'Object Counts',
-          data: [],  // Empty at first
-          backgroundColor: 'rgba(54, 162, 235, 0.2)',
-          borderColor: 'rgba(54, 162, 235, 1)',
-          borderWidth: 1
-        }]
-      },
-      options: {
-        responsive: true,
-        scales: {
-          y: {
-            beginAtZero: true
-          }
-        }
-      }
-    });
-  }
+  // Loop through each prediction and render the bounding box
+  predictions.forEach(prediction => {
+    const [x, y, width, height] = prediction.bbox;
 
-  // Update the Chart.js graph
-  updateChart(objectClass: string) {
-    const chartIndex = this.chart.data.labels.indexOf(objectClass);
+    // Scale the bounding box coordinates to match the video
+    const scaledX = x * xScale;
+    const scaledY = y * yScale;
+    const scaledWidth = width * xScale;
+    const scaledHeight = height * yScale;
 
-    if (chartIndex === -1) {
-      // New object class, add to chart
-      this.chart.data.labels.push(objectClass);
-      this.chart.data.datasets[0].data.push(1);
-    } else {
-      // Existing object class, update count
-      this.chart.data.datasets[0].data[chartIndex]++;
-    }
+    // Draw the bounding box
+    ctx.strokeStyle = '#00FF00';
+    ctx.lineWidth = 4;
+    ctx.strokeRect(scaledX, scaledY, scaledWidth, scaledHeight);
 
-    this.chart.update();  // Update the chart to reflect changes
-  }
+    // Draw the label and confidence score
+    ctx.fillStyle = '#00FF00';
+    ctx.font = '18px Arial';
+    ctx.fillText(
+      `${prediction.class} (${Math.round(prediction.score * 100)}%)`,
+      scaledX,
+      scaledY > 10 ? scaledY - 5 : 10
+    );
+  });
+}
+
 
   // Text-to-Speech function to speak the detected object
   speakDetectedObject(object: string) {
@@ -203,5 +148,18 @@ export class ObjectDetectorComponent implements OnInit {
     };
 
     synth.speak(utterance);
+  }
+
+  // Function to start the countdown timer
+  startCountdown() {
+    const intervalId = setInterval(() => {
+      this.countdown--;  // Decrease countdown value every second
+
+      if (this.countdown <= 0) {
+        clearInterval(intervalId);  // Stop the countdown when it reaches 0
+        this.startWebcam();  // Start the webcam feed
+        this.isCameraStarted = true;  // Set camera active flag
+      }
+    }, 1000);  // Update every 1 second (1000 ms)
   }
 }

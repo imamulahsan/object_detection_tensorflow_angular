@@ -1,38 +1,22 @@
 <div class="object-detection-container">
   <h2>Object Detection</h2>
 
-  <!-- Two-column layout -->
-  <div class="row">
+  <!-- Display countdown timer before camera starts -->
+  <div *ngIf="!isCameraStarted" class="countdown-timer">
+    <p>Starting camera in {{ countdown }} seconds...</p>
+  </div>
 
-    <!-- Left Column -->
-    <div class="column left">
-      <p>Point your camera at an object, and the app will detect and announce what it is.</p>
+  <!-- Video and Canvas for Object Detection (always rendered) -->
+  <div class="video-container" [ngClass]="{'hidden': !isCameraStarted}">
+    <video #videoElement width="640" height="480" autoplay></video>
+    <canvas #canvas id="canvas"></canvas> <!-- Reference to bounding box canvas -->
+  </div>
 
-      <!-- Video and Canvas for Object Detection -->
-      <div class="video-container">
-        <video #videoElement width="640" height="480" autoplay></video>
-        <canvas #canvas id="canvas"></canvas> <!-- Reference to bounding box canvas -->
-      </div>
-
-      <!-- Detected Object Section -->
-      <div *ngIf="detectedObject" class="detected-object">
-        <p>{{ detectedObject }}</p>
-      </div>
-
-      <!-- List of All Detected Objects -->
-      <div class="object-list">
-        <h3>Detected Objects</h3>
-        <ul>
-          <li *ngFor="let object of detectedObjects">{{ object }}</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- Right Column: Chart -->
-    <div class="column right">
-      <h3>Object Detection Statistics</h3>
-      <canvas #chartCanvas></canvas> <!-- Chart.js canvas for the chart -->
-    </div>
-
+  <!-- List of All Detected Objects below the video -->
+  <div *ngIf="isCameraStarted" class="object-list">
+    <h3>Detected Objects</h3>
+    <ul>
+      <li *ngFor="let object of detectedObjects">{{ object }}</li>
+    </ul>
   </div>
 </div>
