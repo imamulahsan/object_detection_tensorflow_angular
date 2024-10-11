@@ -12,12 +12,16 @@ export class ImageClassificationComponent {
   model: any;
   imageSrc: string | ArrayBuffer | null = null;
   prediction: { className: string; probability: number } | null = null;
+  isModelLoaded = false;  // Flag to track model loading status
 
   constructor(private router: Router) {
     // Load the MobileNet model
     mobilenet.load().then(loadedModel => {
       this.model = loadedModel;
+      this.isModelLoaded = true;
       console.log('MobileNet model loaded.');
+    }).catch(err => {
+      console.error('Error loading MobileNet model:', err);
     });
   }
 
@@ -36,10 +40,19 @@ export class ImageClassificationComponent {
 
   // Function to classify the uploaded image
   async classifyImage(imageSrc: string) {
+    if (!this.model) {
+      console.error('Model is not loaded yet.');
+      return;
+    }
+
     const image = new Image();
     image.src = imageSrc;
     image.onload = async () => {
-      const tensor = tf.browser.fromPixels(image).resizeBilinear([224, 224]).expandDims(0).toFloat();
+      const tensor = tf.browser.fromPixels(image)
+        .resizeBilinear([224, 224])
+        .expandDims(0)
+        .toFloat();
+      
       const predictions = await this.model.classify(tensor);
       this.prediction = predictions[0];  // Get the top prediction
       console.log('Prediction:', this.prediction);

@@ -1,22 +1,23 @@
 <div class="image-classification">
-    <h1>Image Classification</h1>
-  
-    <p>Select an image to classify:</p>
-    <label class="custom-file-upload">
-      <input type="file" (change)="onImageUpload($event)" accept="image/*" />
-      Choose Image
-    </label>
-  
-    <div class="preview" *ngIf="imageSrc">
-      <img [src]="imageSrc" alt="Uploaded Image" />
-    </div>
-  
-    <div class="prediction" *ngIf="prediction">
-      <h2>Prediction: {{ prediction.className }}</h2>
-      <p>Confidence: {{ prediction.probability | percent }}</p>
-    </div>
+  <h1>Image Classification</h1>
 
-    <!-- Back Button -->
-  <button class="back-button" (click)="goBack()">Back to Dashboard</button>
+  <p *ngIf="!isModelLoaded">Loading model, please wait...</p>
+
+  <p *ngIf="isModelLoaded">Select an image to classify:</p>
+  <label class="custom-file-upload" *ngIf="isModelLoaded">
+    <input type="file" (change)="onImageUpload($event)" accept="image/*" />
+    Choose Image
+  </label>
+
+  <div class="preview" *ngIf="imageSrc">
+    <img [src]="imageSrc" alt="Uploaded Image" />
   </div>
-  
+
+  <div class="prediction" *ngIf="prediction">
+    <h2>Prediction: {{ prediction.className }}</h2>
+    <p>Confidence: {{ prediction.probability | percent }}</p>
+  </div>
+
+  <!-- Back Button -->
+  <button class="back-button" (click)="goBack()">Back to Dashboard</button>
+</div>
