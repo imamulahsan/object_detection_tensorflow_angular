@@ -1,6 +1,7 @@
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import * as cocoSsd from '@tensorflow-models/coco-ssd';
 import * as tf from '@tensorflow/tfjs';
+import { Router } from '@angular/router';  // Import the Router
 
 @Component({
   selector: 'app-object-detector',
@@ -20,6 +21,8 @@ export class ObjectDetectorComponent implements OnInit, AfterViewInit {
   countdown: number = 3;  // Set your desired countdown time (e.g., 3 seconds)
   isCameraStarted: boolean = false; // Flag to track when the camera feed is active
 
+  constructor(private router: Router) {}  // Inject the Router service
+
   async ngOnInit() {
     await tf.setBackend('webgl');
     await tf.ready();
@@ -31,6 +34,11 @@ export class ObjectDetectorComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     // Now that the view has been initialized, we can safely access the @ViewChild elements
     this.startCountdown();  // Start the countdown before activating the camera
+  }
+
+   // Back button navigation logic
+   goBack() {
+    this.router.navigate(['/dashboard']);  // Navigate back to the dashboard route
   }
 
   startWebcam() {
